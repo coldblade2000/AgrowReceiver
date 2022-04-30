@@ -6,14 +6,17 @@ import android.arch.lifecycle.ViewModel;
 
 public class HomeViewModel extends ViewModel {
 
-    private final MutableLiveData<String> mText;
+    private final MutableLiveData<String> mServerStatus;
+    private final MutableLiveData<String> mRecibidos;
 
     public HomeViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is home fragment");
+        mServerStatus = new MutableLiveData<>();
+        mServerStatus.setValue("Estado del servidor: ");
+        mRecibidos = new MutableLiveData<>();
+        mRecibidos.setValue("Paquetes recibidos: ");
     }
 
     public LiveData<String> getText() {
-        return mText;
+        return mServerStatus;
     }
 }
