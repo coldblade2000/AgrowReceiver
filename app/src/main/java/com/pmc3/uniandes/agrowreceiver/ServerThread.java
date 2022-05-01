@@ -38,19 +38,7 @@ public class ServerThread extends Thread {
     @Override
     public void run() {
         isServerOn.postValue(true);
-        /*try {
-            Log.d(TAG, "Running server");
-            Socket socket = new Socket("192.168.81.145", 10000);
-
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            Log.d(TAG, "run: Outputting to laptop");
-            out.println("Android sends to laptop");
-            String input = in.read();
-            Log.d(TAG, "input: "+ input);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
+//        manualSocketTest();
         try {
             socket = new ServerSocket(port);
             if (socket.getInetAddress() != null) {
@@ -72,6 +60,22 @@ public class ServerThread extends Thread {
             e.printStackTrace();
         }
 
+    }
+
+    private void manualSocketTest() {
+        try {
+            Log.d(TAG, "Running server");
+            Socket socket = new Socket("192.168.81.145", 10000);
+
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            Log.d(TAG, "run: Outputting to laptop");
+            out.println("Android sends to laptop");
+            String input = in.readLine();
+            Log.d(TAG, "input: "+ input);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public synchronized void uploadData(DataPacket dataPacket) {

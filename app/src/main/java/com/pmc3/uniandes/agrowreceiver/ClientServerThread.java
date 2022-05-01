@@ -33,8 +33,9 @@ public class ClientServerThread extends Thread{
         try {
             out = new PrintWriter(clientSocket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            /*out.println("IDENTIFY");
-            String identification = in.readLine();*/
+            out.println("IDENTIFY");
+            String identification = in.readLine();
+            Log.d(TAG, "Client identifies as: " + identification);
             out.println("SEND_DATA");
             StringBuilder sb = new StringBuilder();
 
