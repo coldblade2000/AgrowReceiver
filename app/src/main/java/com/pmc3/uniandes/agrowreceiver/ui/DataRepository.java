@@ -32,6 +32,7 @@ public class DataRepository {
     public void turnServerOn() throws IOException {
         serverThread = new ServerThread(SERVER_PORT, isServerOn, dataPacketDAO);
         isServerOn.setValue(true);
+        serverThread.start();
     }
 
     public void turnServerOff() throws InterruptedException, IOException {
