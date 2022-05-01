@@ -25,7 +25,6 @@ public class HomeFragment extends Fragment {
     MainViewModel model;
 
     private FragmentHomeBinding binding;
-    private ServerSocket socket;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
