@@ -12,7 +12,6 @@ import android.arch.lifecycle.ViewModelProvider;
 import com.pmc3.uniandes.agrowreceiver.ServerThread;
 import com.pmc3.uniandes.agrowreceiver.databinding.FragmentHomeBinding;
 
-import java.io.IOException;
 import java.net.ServerSocket;
 
 public class HomeFragment extends Fragment {
@@ -36,7 +35,7 @@ public class HomeFragment extends Fragment {
     }
 
     public void serverStart(){
-        ServerThread serverThread = new ServerThread(socket, SERVER_PORT);
+        ServerThread serverThread = new ServerThread(socket, SERVER_PORT, this);
         serverThread.start();
     }
 

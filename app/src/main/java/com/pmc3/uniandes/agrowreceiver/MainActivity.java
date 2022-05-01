@@ -1,5 +1,6 @@
 package com.pmc3.uniandes.agrowreceiver;
 
+import android.arch.lifecycle.ViewModelProvider;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
@@ -13,11 +14,12 @@ import androidx.room.Room;
 
 import com.pmc3.uniandes.agrowreceiver.data.AppDatabase;
 import com.pmc3.uniandes.agrowreceiver.databinding.ActivityMainBinding;
+import com.pmc3.uniandes.agrowreceiver.ui.home.HomeViewModel;
 
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
-    private AppDatabase database;
+    private MainViewModel mainViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +27,9 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        mainViewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(MainViewModel.class);
+
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -36,9 +41,9 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-        database = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "database").build();
 
 
     }
+
 
 }

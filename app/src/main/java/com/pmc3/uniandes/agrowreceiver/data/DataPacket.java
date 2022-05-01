@@ -17,4 +17,14 @@ public class DataPacket {
 
     @ColumnInfo(defaultValue = "0")
     public boolean uploadedAlready;
+
+    @Override
+    public String toString() {
+        return "DataPacket{" +
+                "deviceID='" + deviceID + '\'' +
+                ", dataHash='" + dataHash + '\'' +
+                ", payloadJSON='" + payloadJSON + '\'' +
+                ", uploadedAlready=" + uploadedAlready +
+                '}';
+    }
 }
