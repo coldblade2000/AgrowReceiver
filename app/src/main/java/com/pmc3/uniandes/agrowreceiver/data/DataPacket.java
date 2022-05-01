@@ -1,5 +1,6 @@
 package com.pmc3.uniandes.agrowreceiver.data;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Index;
@@ -9,7 +10,9 @@ import androidx.room.PrimaryKey;
         tableName = "datapacket",
         indices = {@Index(value = {"dataHash"}, unique = true)})
 public class DataPacket {
+    @NonNull
     public String deviceID;
+    @NonNull
     public String dataHash;
 
     public String payloadJSON;

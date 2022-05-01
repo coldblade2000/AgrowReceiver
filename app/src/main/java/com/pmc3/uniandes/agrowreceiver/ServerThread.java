@@ -1,7 +1,8 @@
 package com.pmc3.uniandes.agrowreceiver;
 
-import android.arch.lifecycle.MutableLiveData;
 import android.util.Log;
+
+import androidx.lifecycle.MutableLiveData;
 
 import com.pmc3.uniandes.agrowreceiver.data.DataPacket;
 import com.pmc3.uniandes.agrowreceiver.data.DataPacketDAO;
@@ -27,7 +28,7 @@ public class ServerThread extends Thread{
 
     @Override
     public void run() {
-        isServerOn.setValue(true);
+        isServerOn.postValue(true);
         try {
             socket = new ServerSocket(port);
             while (isServerOn.getValue() != null && isServerOn.getValue()){

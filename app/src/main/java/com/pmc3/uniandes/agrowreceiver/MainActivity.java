@@ -1,20 +1,17 @@
 package com.pmc3.uniandes.agrowreceiver;
 
-import android.arch.lifecycle.ViewModelProvider;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v7.app.AppCompatActivity;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.room.Room;
 
-import com.pmc3.uniandes.agrowreceiver.data.AppDatabase;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.pmc3.uniandes.agrowreceiver.databinding.ActivityMainBinding;
-import com.pmc3.uniandes.agrowreceiver.ui.home.HomeViewModel;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,10 +22,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        mainViewModel = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(MainViewModel.class);
 
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
