@@ -12,15 +12,17 @@ import com.pmc3.uniandes.agrowreceiver.data.DataPacketDAO;
 import java.io.IOException;
 
 public class DataRepository {
-    public static final int SERVER_PORT = 5678;
+    public static final int SERVER_PORT = 12345;
 
     public final MutableLiveData<Boolean> isServerOn;
     public AppDatabase database;
     DataPacketDAO dataPacketDAO;
 
     ServerThread serverThread;
+    private Application application;
 
     public DataRepository(Application application) {
+        this.application = application;
         isServerOn = new MutableLiveData<>();
         isServerOn.postValue(false);
 
@@ -30,7 +32,7 @@ public class DataRepository {
     }
 
     public void turnServerOn() throws IOException {
-        serverThread = new ServerThread(SERVER_PORT, isServerOn, dataPacketDAO);
+        serverThread = new ServerThread(SERVER_PORT, isServerOn, dataPacketDAO, application);
         isServerOn.postValue(true);
         serverThread.start();
     }

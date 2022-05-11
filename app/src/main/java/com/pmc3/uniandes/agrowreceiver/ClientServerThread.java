@@ -33,14 +33,16 @@ public class ClientServerThread extends Thread{
         try {
             out = new PrintWriter(clientSocket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            /*out.println("IDENTIFY");
-            String identification = in.readLine();*/
+            //out.println("IDENTIFY");
+            String identification = in.readLine();
+            Log.d(TAG, "Client identifies as: " + identification);
             out.println("SEND_DATA");
             StringBuilder sb = new StringBuilder();
 
             String line;
             while ( (line = in.readLine()) != null) {
-                sb.append(line).append(System.lineSeparator());
+                Log.d(TAG, "Reading line: " + line);
+                sb.append(line);
             }
             String jsonPayload = sb.toString();
             Log.d(TAG, "JSON payload received");

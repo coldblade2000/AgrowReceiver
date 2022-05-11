@@ -1,9 +1,18 @@
 package com.pmc3.uniandes.agrowreceiver;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.util.Log;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -15,6 +24,7 @@ import com.pmc3.uniandes.agrowreceiver.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "MainActivity";
     private ActivityMainBinding binding;
     private MainViewModel mainViewModel;
 
@@ -27,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
 
-
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -38,9 +47,47 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-
-
+        WifiManager wm = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        WifiManager.MulticastLock multicastLock = wm.createMulticastLock("mydebuginfo");
+        multicastLock.acquire();
+        Log.d(TAG, "multicast lock is held? : " + multicastLock.isHeld());
     }
+
+/*
+    public void startHotspot() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            WifiManager wifiManager = getApplicationContext().getSystemService(WifiManager.class);
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            }
+            wifiManager.startLocalOnlyHotspot(new WifiManager.LocalOnlyHotspotCallback() {
+
+                @Override
+                public void onStarted(WifiManager.LocalOnlyHotspotReservation reservation) {
+                    super.onStarted(reservation);
+                    WifiConfiguration wifiConfiguration = reservation.getWifiConfiguration();
+                    wifiConfiguration.
+                    Log.d(TAG, "Wifi Hotspot is on now");
+                    mReservation = reservation;
+                }
+
+                @Override
+                public void onStopped() {
+                    super.onStopped();
+                    Log.d(TAG, "onStopped: ");
+                    mReservation = null;
+                }
+
+                @Override
+                public void onFailed(int reason) {
+                    super.onFailed(reason);
+                    Log.d(TAG, "onFailed: ");
+                    mReservation = null;
+                }
+            }, new Handler());
+        }
+    }
+*/
 
 
 }
