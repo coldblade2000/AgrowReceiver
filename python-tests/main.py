@@ -56,14 +56,16 @@ class AnnounceThread(threading.Thread):
         self.announce_port = announce_port
 
     def run(self, *args, **kwargs):
+        message = f"AGROW_SENSOR_ID={SENSOR_ID}"
+        print("Started broadcast server, broadcasting the message: ", message)
         udp_sock_announce_ip = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         udp_sock_announce_ip.bind(("", self.announce_port))
         udp_sock_announce_ip.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         udp_sock_announce_ip.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 
         while True:
-            message = f"AGROW_SENSOR_ID={SENSOR_ID}"
-            udp_sock_announce_ip.sendall(message)
+            print("\t\t broadcasting announcement")
+            udp_sock_announce_ip.sendto(message.encode(), ("255.255.255.255", self.announce_port))
             time.sleep(4)
 
 
@@ -81,6 +83,7 @@ announce_thread.start()
 
 android_address = None
 while android_address is None:
+    print("Waiting to receive")
     data, addr = udp_sock_recv_ip.recvfrom(1024)
     datastring = str(data.decode("utf-8"))
     print(datastring)
