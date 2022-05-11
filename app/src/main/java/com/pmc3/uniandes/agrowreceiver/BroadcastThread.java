@@ -59,17 +59,17 @@ public class BroadcastThread extends Thread {
 
             Log.d(TAG, "Message: "+ message);
 
-            InetAddress group = InetAddress.getByName("FF7E:230::1234");
+            /*InetAddress group = InetAddress.getByName("FF7E:230::1234");
             MulticastSocket multicastSocket = new MulticastSocket(25506);
             multicastSocket.joinGroup(group);
             Log.d(TAG, "run: Joined group");
-            /*datagramSocket.setBroadcast(true);
+            *//*datagramSocket.setBroadcast(true);
             if (datagramSocket.getInetAddress() != null) {
                 Log.d(TAG, "getINetAddress: " + datagramSocket.getInetAddress().toString());
             }
             if (datagramSocket.getLocalAddress() != null) {
                 Log.d(TAG, "getLocalAddress: " + datagramSocket.getLocalAddress().toString());
-            }*/
+            }*//*
             while (isServerOn.getValue() != null && isServerOn.getValue()) {
                 Log.d(TAG, "run: Broadcast iteration");
                 byte[] buffer = message.getBytes();
@@ -78,8 +78,22 @@ public class BroadcastThread extends Thread {
                 multicastSocket.send(packet);
                 Log.d(TAG, "Sending multicast packet");
                 Thread.sleep(5000);
+            }*/
+
+            DatagramSocket socket = new DatagramSocket();
+            socket.setReuseAddress(true);
+            socket.setBroadcast(true);
+
+            while (isServerOn.getValue() != null && isServerOn.getValue()) {
+                Log.d(TAG, "run: Broadcast iteration");
+                byte[] buffer = message.getBytes();
+                DatagramPacket packet
+                        = new DatagramPacket(buffer, buffer.length, InetAddress.getByName("255.255.255.255"), 1716);
+                socket.send(packet);
+                Log.d(TAG, "Sending multicast packet");
+                Thread.sleep(5000);
             }
-            multicastSocket.close();
+            socket.close();
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }

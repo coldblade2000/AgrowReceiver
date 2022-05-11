@@ -40,6 +40,7 @@ public class ServerThread extends Thread {
         isServerOn.postValue(true);
 //        manualSocketTest();
         try {
+            Log.d(TAG, "run: Server socket bound on port "+ port);
             socket = new ServerSocket(port);
             if (socket.getInetAddress() != null) {
                 Log.d(TAG, "getINetAddress: " + socket.getInetAddress().toString());
@@ -62,7 +63,7 @@ public class ServerThread extends Thread {
 
     }
 
-    private void manualSocketTest() {
+    private void manualSockgetTest() {
         try {
             Log.d(TAG, "Running server");
             Socket socket = new Socket("192.168.81.145", 10000);

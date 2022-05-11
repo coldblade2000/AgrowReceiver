@@ -12,7 +12,7 @@ import com.pmc3.uniandes.agrowreceiver.data.DataPacketDAO;
 import java.io.IOException;
 
 public class DataRepository {
-    public static final int SERVER_PORT = 5678;
+    public static final int SERVER_PORT = 12345;
 
     public final MutableLiveData<Boolean> isServerOn;
     public AppDatabase database;
