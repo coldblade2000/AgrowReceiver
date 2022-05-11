@@ -19,8 +19,10 @@ public class DataRepository {
     DataPacketDAO dataPacketDAO;
 
     ServerThread serverThread;
+    private Application application;
 
     public DataRepository(Application application) {
+        this.application = application;
         isServerOn = new MutableLiveData<>();
         isServerOn.postValue(false);
 
@@ -30,7 +32,7 @@ public class DataRepository {
     }
 
     public void turnServerOn() throws IOException {
-        serverThread = new ServerThread(SERVER_PORT, isServerOn, dataPacketDAO);
+        serverThread = new ServerThread(SERVER_PORT, isServerOn, dataPacketDAO, application);
         isServerOn.postValue(true);
         serverThread.start();
     }

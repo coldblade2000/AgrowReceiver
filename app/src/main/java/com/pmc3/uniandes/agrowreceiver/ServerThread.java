@@ -1,5 +1,6 @@
 package com.pmc3.uniandes.agrowreceiver;
 
+import android.app.Application;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
@@ -24,10 +25,12 @@ public class ServerThread extends Thread {
     private final int port;
     private MutableLiveData<Boolean> isServerOn;
     private DataPacketDAO dataPacketDAO;
+    private Application application;
     public String broadcastMessage;
 
-    public ServerThread(int port, MutableLiveData<Boolean> isServerOn, DataPacketDAO dataPacketDAO) {
+    public ServerThread(int port, MutableLiveData<Boolean> isServerOn, DataPacketDAO dataPacketDAO, Application application) {
         this.dataPacketDAO = dataPacketDAO;
+        this.application = application;
         this.socket = null;
         this.port = port;
         this.isServerOn = isServerOn;
@@ -45,7 +48,7 @@ public class ServerThread extends Thread {
             if (socket.getInetAddress() != null) {
                 Log.d(TAG, "getINetAddress: " + socket.getInetAddress().toString());
             }
-            BroadcastThread broadcastThread = new BroadcastThread(broadcastMessage, isServerOn);
+            BroadcastThread broadcastThread = new BroadcastThread(broadcastMessage, isServerOn, application);
             broadcastThread.start();
             while (isServerOn.getValue() != null && isServerOn.getValue()) {
                 Log.d(TAG, "Server socket waiting for connection");
