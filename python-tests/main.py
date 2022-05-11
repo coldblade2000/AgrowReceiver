@@ -2,8 +2,8 @@ import json
 import random
 import hashlib
 import socket
-import struct
-import sys
+import threading
+import time
 
 from datetime import timedelta, datetime
 
@@ -13,9 +13,12 @@ from faker.providers import date_time
 fake = Faker()
 fake.add_provider(date_time)
 
+SENSOR_ID = "5"
+
 
 def generateJSONPayload() -> str:
-    baseDate = fake.date_time_between(datetime.fromisoformat("2022-02-02T11:42:52"), datetime.fromisoformat("2022-04-20T11:42:52"))
+    baseDate = fake.date_time_between(datetime.fromisoformat("2022-02-02T11:42:52"),
+                                      datetime.fromisoformat("2022-04-20T11:42:52"))
     objList = []
     for i in range(0, random.randint(10, 15)):
         mockObj = {
@@ -47,26 +50,38 @@ def generateJSONDataPackets():
     return encoded + "\r\n"
 
 
-# multicast_group = "239.5.6.99"
-# multicast_port = 6789
-#
-# udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, proto=socket.IPPROTO_UDP, fileno=None)
-# udp_sock.bind(("", multicast_port))
-# print("Bound UDP socket")
-#
-# group = socket.inet_aton(multicast_group)
-# mreq = struct.pack("4sL", group, socket.INADDR_ANY)
-# udp_sock.setsockopt(socket.IPPROTO_IP, socket.IP_ADD_MEMBERSHIP, mreq)
-# print("Configured udp socket")
+class AnnounceThread(threading.Thread):
+    def __init__(self, announce_port):
+        threading.Thread.__init__(self)
+        self.announce_port = announce_port
 
-udp_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-udp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-udp_sock.bind(("0.0.0.0", 1716))
+    def run(self, *args, **kwargs):
+        udp_sock_announce_ip = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        udp_sock_announce_ip.bind(("", self.announce_port))
+        udp_sock_announce_ip.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        udp_sock_announce_ip.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+
+        while True:
+            message = f"AGROW_SENSOR_ID={SENSOR_ID}"
+            udp_sock_announce_ip.sendall(message)
+            time.sleep(4)
+
+
+# Get local IP
+local_ip = socket.gethostbyname(socket.gethostname())
+
+# Open socket that listens to broadcast from the cellphone
+udp_sock_recv_ip = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+udp_sock_recv_ip.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+udp_sock_recv_ip.bind(("0.0.0.0", 12341))
 print("UDP server bound")
+
+announce_thread = AnnounceThread(12340)
+announce_thread.start()
 
 android_address = None
 while android_address is None:
-    data, addr = udp_sock.recvfrom(1024)
+    data, addr = udp_sock_recv_ip.recvfrom(1024)
     datastring = str(data.decode("utf-8"))
     print(datastring)
     if datastring.startswith("AGROW_COLLECTOR_IP"):
