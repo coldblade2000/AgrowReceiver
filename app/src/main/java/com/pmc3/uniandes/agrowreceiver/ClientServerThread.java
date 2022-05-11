@@ -31,6 +31,7 @@ public class ClientServerThread extends Thread{
     @Override
     public void run() {
         try {
+            Log.d(TAG, "Started clientserverthread");
             out = new PrintWriter(clientSocket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             //out.println("IDENTIFY");
@@ -39,10 +40,10 @@ public class ClientServerThread extends Thread{
             out.println("SEND_DATA");
             StringBuilder sb = new StringBuilder();
 
-            String line;
-            while ( (line = in.readLine()) != null) {
-                Log.d(TAG, "Reading line: " + line);
-                sb.append(line);
+
+            int value;
+            while ( (value = in.read()) != -1) {
+                sb.append((char)value);
             }
             String jsonPayload = sb.toString();
             Log.d(TAG, "JSON payload received");

@@ -23,6 +23,7 @@ public class HomeFragment extends Fragment {
 
     public static final String TAG = "HomeFragment";
     MainViewModel model;
+    HomeViewModel homeViewModel;
 
     private FragmentHomeBinding binding;
 
@@ -42,6 +43,10 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         model = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
+        homeViewModel = new ViewModelProvider(requireActivity()).get(HomeViewModel.class);
+
+        model.repository.isServerOn.observe(getViewLifecycleOwner(), binding.switch1::setChecked);
+
 
         binding.switch1.setOnCheckedChangeListener((CompoundButton var1, boolean var2) -> {
             if (var2){

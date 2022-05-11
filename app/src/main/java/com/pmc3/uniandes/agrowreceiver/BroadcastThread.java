@@ -1,5 +1,7 @@
 package com.pmc3.uniandes.agrowreceiver;
 
+import static com.pmc3.uniandes.agrowreceiver.ui.DataRepository.BROADCAST_PORT;
+
 import android.app.Application;
 import android.content.Context;
 import android.net.DhcpInfo;
@@ -20,6 +22,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 
 public class BroadcastThread extends Thread {
     private static final String TAG = "BroadcastThread";
@@ -58,28 +61,42 @@ public class BroadcastThread extends Thread {
                 inetAddresses.add(address);
                 Log.d(TAG, "Found the address: " + address.toString());
             }
+            desiredAddress = inetAddresses.get(1);
 
-
-            message = "AGROW_COLLECTOR_IP=" + inetAddresses.get(0).toString().trim().substring(1);
+            message = "AGROW_COLLECTOR_IP=" + desiredAddress.toString().trim().substring(1);
 
             Log.d(TAG, "Message: " + message);
 
+            HashMap<String, InetAddress> sensorIDs = new HashMap<>();
 
-            DatagramSocket socket = new DatagramSocket();
-            socket.setReuseAddress(true);
-            socket.setBroadcast(true);
+            DatagramSocket serverSocket = new DatagramSocket(BROADCAST_PORT);
+            byte[] receiveData = new byte[100];
+            byte[] sendData = message.getBytes();
+
 
             while (isServerOn.getValue() != null && isServerOn.getValue()) {
-                Log.d(TAG, "run: Broadcast iteration");
-                byte[] buffer = message.getBytes();
-                DatagramPacket packet
-                        = new DatagramPacket(buffer, buffer.length, getBroadcastAddress(), 12340);
-                socket.send(packet);
-                Log.d(TAG, "Sending multicast packet");
-                Thread.sleep(5000);
+                //Receives broadcast of possible server
+                DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+                serverSocket.receive(receivePacket);
+                String sentence = new String( receivePacket.getData());
+                if (!sentence.startsWith("AGROW_SENSOR_ID=")){
+                    // Filters out packets that aren't AGROW sensors
+                    continue;
+                }
+                sentence = sentence.substring(0, sentence.indexOf(0));
+                Log.d(TAG, "RECEIVED: " + sentence);
+                String sensorID = sentence.split("=")[1].trim();
+                InetAddress IPAddress = receivePacket.getAddress();
+                if (sensorIDs.containsKey(sensorID)){
+                    continue;
+                }else{
+                    sensorIDs.put(sensorID, IPAddress);
+                    DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, BROADCAST_PORT+1);
+                    serverSocket.send(sendPacket);
+                }
             }
-            socket.close();
-        } catch (IOException | InterruptedException e) {
+            serverSocket.close();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
