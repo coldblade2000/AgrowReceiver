@@ -42,10 +42,10 @@ public class ClientServerThread extends Thread{
 
 
             int value;
-            while ( (value = in.read()) != -1) {
+            while ( (value = in.read()) != -1 && value != 0) {
                 sb.append((char)value);
             }
-            String jsonPayload = sb.toString();
+            String jsonPayload = sb.toString().trim();
             Log.d(TAG, "JSON payload received");
             out.println("DATA_RECEIVED");
             clientSocket.close();

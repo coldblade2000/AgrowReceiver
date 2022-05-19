@@ -34,8 +34,8 @@ def generateJSONPayload() -> str:
 
 def generateJSONDataPackets():
     objList = []
-    for j in range(0, 10):
-        for i in range(0, random.randint(20, 30)):
+    for j in range(0, 1):
+        for i in range(0, random.randint(2, 5)):
             payloadJSON = str(generateJSONPayload())
             payloadHash = str(hashlib.md5(payloadJSON.encode()).hexdigest())
             mockObj = {
@@ -45,9 +45,9 @@ def generateJSONDataPackets():
             }
             objList.append(mockObj)
     print("Acabo de generar paquetes")
-    encoded = json.JSONEncoder().encode(objList)
+    encoded = json.JSONEncoder().encode(objList) + "\00"
     print("Termino de encodear paquetes, length ", len(encoded))
-    return encoded + "\r\n"
+    return encoded
 
 
 class AnnounceThread(threading.Thread):
@@ -59,9 +59,9 @@ class AnnounceThread(threading.Thread):
         message = f"AGROW_SENSOR_ID={SENSOR_ID}"
         print("Started broadcast server, broadcasting the message: ", message)
         udp_sock_announce_ip = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        udp_sock_announce_ip.bind(("", self.announce_port))
         udp_sock_announce_ip.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         udp_sock_announce_ip.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        udp_sock_announce_ip.bind(("", self.announce_port))
 
         while True:
             print("\t\t broadcasting announcement")

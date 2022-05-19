@@ -41,6 +41,7 @@ public class ServerThread extends Thread {
 
     @Override
     public void run() {
+        setName("ServerThread");
         Log.d(TAG, "Condition status: " + (isServerOn.getValue() != null && isServerOn.getValue()));
 
 //        manualSocketTest();
@@ -53,6 +54,7 @@ public class ServerThread extends Thread {
             }
             BroadcastThread broadcastThread = new BroadcastThread(broadcastMessage, isServerOn, application);
             Log.d(TAG, "Initialized broadcast thread");
+            broadcastThread.setName("Broadcast thread");
             broadcastThread.start();
             Log.d(TAG, "Started broadcast thread");
             Log.d(TAG, "Condition status: " + (isServerOn.getValue() != null && isServerOn.getValue()));
@@ -62,6 +64,7 @@ public class ServerThread extends Thread {
                 if (clientSocket.isConnected()) {
                     Log.d(TAG, "Client socket connected!");
                     ClientServerThread clientServerThread = new ClientServerThread(this, clientSocket);
+                    clientServerThread.setName("Client name");
                     clientServerThread.start();
                 }
             }

@@ -80,6 +80,7 @@ public class BroadcastThread extends Thread {
                 serverSocket.receive(receivePacket);
                 String sentence = new String( receivePacket.getData());
                 if (!sentence.startsWith("AGROW_SENSOR_ID=")){
+                    Log.d(TAG, "run: Ignored packet");
                     // Filters out packets that aren't AGROW sensors
                     continue;
                 }
@@ -93,8 +94,10 @@ public class BroadcastThread extends Thread {
                     sensorIDs.put(sensorID, IPAddress);
                     DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, BROADCAST_PORT+1);
                     serverSocket.send(sendPacket);
+                    Log.d(TAG, "run: Sending " + message);
                 }
             }
+            Log.d(TAG, "run: Finished server loop");
             serverSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
