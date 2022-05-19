@@ -13,6 +13,7 @@ import java.io.IOException;
 
 public class DataRepository {
     public static final int SERVER_PORT = 12345;
+    public static final int BROADCAST_PORT = 12340;
 
     public final MutableLiveData<Boolean> isServerOn;
     public AppDatabase database;
@@ -32,8 +33,8 @@ public class DataRepository {
     }
 
     public void turnServerOn() throws IOException {
+        isServerOn.setValue(true);
         serverThread = new ServerThread(SERVER_PORT, isServerOn, dataPacketDAO, application);
-        isServerOn.postValue(true);
         serverThread.start();
     }
 

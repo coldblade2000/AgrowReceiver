@@ -4,6 +4,7 @@ import android.app.Application;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.pmc3.uniandes.agrowreceiver.data.DataPacket;
@@ -23,12 +24,12 @@ public class ServerThread extends Thread {
 
     private ServerSocket socket;
     private final int port;
-    private MutableLiveData<Boolean> isServerOn;
+    private LiveData<Boolean> isServerOn;
     private DataPacketDAO dataPacketDAO;
     private Application application;
     public String broadcastMessage;
 
-    public ServerThread(int port, MutableLiveData<Boolean> isServerOn, DataPacketDAO dataPacketDAO, Application application) {
+    public ServerThread(int port, LiveData<Boolean> isServerOn, DataPacketDAO dataPacketDAO, Application application) {
         this.dataPacketDAO = dataPacketDAO;
         this.application = application;
         this.socket = null;
@@ -40,16 +41,21 @@ public class ServerThread extends Thread {
 
     @Override
     public void run() {
-        isServerOn.postValue(true);
+        Log.d(TAG, "Condition status: " + (isServerOn.getValue() != null && isServerOn.getValue()));
+
 //        manualSocketTest();
         try {
             Log.d(TAG, "run: Server socket bound on port "+ port);
             socket = new ServerSocket(port);
+            socket.setReuseAddress(true);
             if (socket.getInetAddress() != null) {
                 Log.d(TAG, "getINetAddress: " + socket.getInetAddress().toString());
             }
             BroadcastThread broadcastThread = new BroadcastThread(broadcastMessage, isServerOn, application);
+            Log.d(TAG, "Initialized broadcast thread");
             broadcastThread.start();
+            Log.d(TAG, "Started broadcast thread");
+            Log.d(TAG, "Condition status: " + (isServerOn.getValue() != null && isServerOn.getValue()));
             while (isServerOn.getValue() != null && isServerOn.getValue()) {
                 Log.d(TAG, "Server socket waiting for connection");
                 Socket clientSocket = socket.accept();
@@ -88,6 +94,7 @@ public class ServerThread extends Thread {
     }
 
     public void closeServer() throws IOException {
+        Log.d(TAG, "closeServer: Closing server");
         socket.close();
     }
 
